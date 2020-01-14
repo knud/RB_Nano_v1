@@ -10,11 +10,11 @@
  *
  */
 
-/** @example examples/ble_peripheral/ble_app_blinky/main.c
+/*!
+ * @brief HackED2020 example controlling a PWM output
  *
- * @brief Blinky Sample Application main file.
+ * @author Steven Knudsen
  *
- * This file contains the source code for a sample application using the LED Button service.
  */
 
 #include <stdint.h>
@@ -38,13 +38,16 @@
 
 static bool pwmOn;
 
+/*!
+ * @note The custom Red Bear Nano v1 board definition remaps the BSP definitions.
+ */
 #define ADVERTISING_LED_PIN             BSP_LED_0_MASK                              /**< Is on when device is advertising. */
 #define CONNECTED_LED_PIN               BSP_LED_1_MASK                              /**< Is on when device has connected. */
 
 #define LEDBUTTON_LED_PIN               BSP_LED_0_MASK                              /**< LED to be toggled with the help of the LED Button Service. */
 #define LEDBUTTON_BUTTON_PIN            BSP_BUTTON_0                                /**< Button that will trigger the notification event with the LED Button Service */
 
-#define DEVICE_NAME                     "Nordic_PWM"                                /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "HackED_PWM"                                /**< Name of device. Will be included in the advertising data. */
 
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms; this value corresponds to 40 ms). */
 #define APP_ADV_TIMEOUT_IN_SECONDS      BLE_GAP_ADV_TIMEOUT_GENERAL_UNLIMITED       /**< The advertising time-out (in units of seconds). When set to 0, we will never time out. */
@@ -298,8 +301,6 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 
       err_code = app_button_enable();
       APP_ERROR_CHECK(err_code);
-
-      pwmOn = false;
       break;
 
     case BLE_GAP_EVT_DISCONNECTED:
@@ -310,9 +311,6 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
       APP_ERROR_CHECK(err_code);
 
       advertising_start();
-
-      pwmOn = false;
-
       break;
 
     case BLE_GAP_EVT_SEC_PARAMS_REQUEST:
@@ -465,16 +463,6 @@ int main(void)
   pwm_config.gpio_num[1] = 29;
 
   nrf_pwm_init(&pwm_config);
-
-//  for (uint16_t i = 0; i < 255; i++) {
-//    if (pwmOn) {
-//      nrf_pwm_set_value(0, i);
-//    }
-//    else {
-//      nrf_pwm_set_value(0, 0);
-//    }
-//    nrf_delay_ms(50);
-//  }
 
   // Enter main loop.
   for (;;)
